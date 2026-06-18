@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Conferência de Cadastro — Agás & Eugas</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F5F6F8;color:#1a1a1a;font-size:14px;min-height:100vh}
+header{background:#fff;border-bottom:1px solid #E2E4E9;padding:12px 24px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:10}
+header h1{font-size:15px;font-weight:600;color:#111}
+header p{font-size:11px;color:#6B7280;margin-top:1px}
+nav{display:flex;gap:4px;margin-left:auto}
+.nav-btn{padding:6px 14px;border-radius:7px;border:1px solid #E2E4E9;font-size:12px;font-weight:500;cursor:pointer;background:#fff;color:#6B7280;transition:all .15s}
+.nav-btn.active{background:#111;color:#fff;border-color:#111}
+.container{max-width:1100px;margin:0 auto;padding:20px 16px 48px}
+
+/* checklist */
+.top-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.cod-box{background:#fff;border:1px solid #E2E4E9;border-radius:10px;padding:12px 14px}
+.cod-box-head{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid #F0F1F4}
+.cod-box-head.agas{color:#1553A0}
+.cod-box-head.eugas{color:#0C6B4E}
+.cod-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.status-toggle{display:flex;gap:4px;margin-top:10px;padding-top:10px;border-top:1px dashed #F0F1F4}
+.status-toggle-label{font-size:11px;color:#6B7280;font-weight:500;text-transform:uppercase;letter-spacing:.04em;display:flex;align-items:center;margin-right:4px}
+.status-pill{flex:1;padding:6px 12px;border-radius:7px;border:1px solid #E2E4E9;font-size:12px;font-weight:500;cursor:pointer;background:#fff;color:#6B7280;transition:all .15s;text-align:center;user-select:none;display:flex;align-items:center;justify-content:center;gap:5px}
+.status-pill:hover{border-color:#CBD0D8}
+.status-pill.ativo.on{background:#ECFDF5;color:#065F46;border-color:#A7F3D0;font-weight:600}
+.status-pill.inativo.on{background:#FEF2F2;color:#991B1B;border-color:#FECACA;font-weight:600}
+.field-wrap label{display:block;font-size:11px;color:#6B7280;margin-bottom:4px;font-weight:500;text-transform:uppercase;letter-spacing:.04em}
+.field-wrap input{width:100%;border:1px solid #E2E4E9;border-radius:7px;padding:6px 10px;font-size:13px;color:#111;background:#FAFAFA;outline:none;transition:border .15s}
+.field-wrap input:focus{border-color:#6B7AFF;background:#fff}
+.resp-box{background:#fff;border:1px solid #E2E4E9;border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.resp-box label{font-size:12px;color:#6B7280;white-space:nowrap;font-weight:500}
+.resp-box input{border:1px solid #E2E4E9;border-radius:7px;padding:5px 10px;font-size:13px;color:#111;background:#FAFAFA;outline:none;flex:1;transition:border .15s}
+.resp-box input:focus{border-color:#6B7AFF;background:#fff}
+.summary-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.sum-card{background:#fff;border:1px solid #E2E4E9;border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:12px}
+.sum-bar-accent{width:6px;height:36px;border-radius:4px;flex-shrink:0}
+.sum-num{font-size:22px;font-weight:700;color:#111;line-height:1}
+.sum-label{font-size:11px;color:#6B7280;margin-top:3px}
+.prog-track{flex:1;height:5px;background:#F0F1F4;border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;border-radius:3px;transition:width .3s;width:0%}
+.prog-fill.agas{background:#378ADD}
+.prog-fill.eugas{background:#1D9E75}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.col-card{background:#fff;border:1px solid #E2E4E9;border-radius:10px;overflow:hidden}
+.col-head{padding:10px 14px;display:flex;align-items:center;gap:8px}
+.col-head.agas{background:#EEF4FC;border-bottom:1px solid #D5E4F5}
+.col-head.eugas{background:#E8F7F1;border-bottom:1px solid #C2E8D8}
+.col-head span{font-size:13px;font-weight:600}
+.col-head.agas span{color:#1553A0}
+.col-head.eugas span{color:#0C6B4E}
+.col-head small{font-size:11px;margin-left:auto;padding:2px 8px;border-radius:20px;font-weight:500}
+.col-head.agas small{background:#D5E4F5;color:#1553A0}
+.col-head.eugas small{background:#C2E8D8;color:#0C6B4E}
+.col-prog{height:3px;background:#F0F1F4}
+.col-prog-fill{height:100%;transition:width .3s;width:0%}
+.col-prog-fill.agas{background:#378ADD}
+.col-prog-fill.eugas{background:#1D9E75}
+.item-label{font-size:10px;font-weight:600;color:#9CA3AF;text-transform:uppercase;letter-spacing:.06em;padding:5px 14px 4px;background:#FAFAFA;border-bottom:1px solid #F0F1F4}
+.item-row{display:flex;gap:8px;align-items:flex-start;padding:9px 12px;border-bottom:1px solid #F5F6F8}
+.item-row:last-child{border-bottom:none}
+.item-info{flex:1;min-width:0}
+.item-name{font-size:13px;color:#111;font-weight:500;line-height:1.3}
+.item-desc{font-size:11px;color:#9CA3AF;margin-top:2px;line-height:1.3}
+.venc-inp{margin-top:5px;border:1px solid #E2E4E9;border-radius:6px;padding:3px 7px;font-size:12px;color:#111;background:#FAFAFA;width:100%;max-width:140px;outline:none}
+.venc-inp:focus{border-color:#6B7AFF;background:#fff}
+.obs-inp{margin-top:5px;border:1px solid #E2E4E9;border-radius:6px;padding:3px 7px;font-size:11px;color:#111;background:#FAFAFA;width:100%;resize:none;min-height:26px;font-family:inherit;outline:none;line-height:1.5}
+.obs-inp:focus{border-color:#6B7AFF;background:#fff}
+.pills{display:flex;flex-direction:column;gap:4px;flex-shrink:0;padding-top:1px}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;border:1px solid #E2E4E9;font-size:11px;font-weight:500;cursor:pointer;color:#6B7280;background:#fff;transition:all .15s;white-space:nowrap;line-height:1;user-select:none}
+.pill:hover{border-color:#CBD0D8}
+.pill.sim.on{background:#ECFDF5;color:#065F46;border-color:#A7F3D0}
+.pill.nao.on{background:#FEF2F2;color:#991B1B;border-color:#FECACA}
+.notes-card{background:#fff;border:1px solid #E2E4E9;border-radius:10px;overflow:hidden;margin-bottom:14px}
+.notes-head{padding:10px 14px;background:#FAFAFA;border-bottom:1px solid #F0F1F4;display:flex;align-items:center;gap:8px}
+.notes-head span{font-size:13px;font-weight:600;color:#111}
+.notes-head small{font-size:11px;color:#9CA3AF;margin-left:auto}
+.notes-body{padding:12px 14px}
+textarea.notes-ta{width:100%;border:1px solid #E2E4E9;border-radius:8px;padding:10px 12px;font-size:13px;color:#111;background:#FAFAFA;resize:vertical;min-height:90px;font-family:inherit;line-height:1.6;outline:none;transition:border .15s}
+textarea.notes-ta:focus{border-color:#6B7AFF;background:#fff}
+textarea.notes-ta::placeholder{color:#C4C9D4}
+.char-c{font-size:11px;color:#C4C9D4;text-align:right;margin-top:4px}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;border:1px solid #E2E4E9;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s}
+.btn-save{background:#111;color:#fff;border-color:#111}
+.btn-save:hover{background:#333}
+.btn-save:disabled{background:#9CA3AF;border-color:#9CA3AF;cursor:not-allowed}
+.btn-clear{background:#fff;color:#6B7280;border-color:#E2E4E9}
+.btn-clear:hover{background:#F5F6F8}
+
+/* DASHBOARD */
+#page-relatorio{display:none}
+.dash-title{font-size:17px;font-weight:600;color:#111;margin-bottom:4px}
+.dash-sub{font-size:12px;color:#9CA3AF;margin-bottom:18px}
+
+/* KPI cards clicáveis */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.kpi-card{background:#fff;border:2px solid #E2E4E9;border-radius:12px;padding:16px 18px;cursor:pointer;transition:all .18s;position:relative;overflow:hidden}
+.kpi-card:hover{border-color:#6B7AFF;transform:translateY(-2px);box-shadow:0 4px 16px rgba(107,122,255,.12)}
+.kpi-card.active{border-color:#6B7AFF;box-shadow:0 4px 16px rgba(107,122,255,.18)}
+.kpi-card.active-agas{border-color:#378ADD;box-shadow:0 4px 16px rgba(55,138,221,.18)}
+.kpi-card.active-eugas{border-color:#1D9E75;box-shadow:0 4px 16px rgba(29,158,117,.18)}
+.kpi-card.active-pend{border-color:#DC2626;box-shadow:0 4px 16px rgba(220,38,38,.18)}
+.kpi-accent{height:4px;border-radius:2px;margin-bottom:14px}
+.kpi-num{font-size:32px;font-weight:700;color:#111;line-height:1}
+.kpi-label{font-size:12px;color:#6B7280;margin-top:6px;font-weight:500}
+.kpi-hint{font-size:10px;color:#C4C9D4;margin-top:3px}
+.kpi-arrow{position:absolute;top:14px;right:14px;font-size:16px;color:#E2E4E9;transition:color .15s}
+.kpi-card:hover .kpi-arrow,.kpi-card.active .kpi-arrow,.kpi-card.active-agas .kpi-arrow,.kpi-card.active-eugas .kpi-arrow,.kpi-card.active-pend .kpi-arrow{color:#6B7AFF}
+
+/* gráfico de barras simples */
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.chart-card{background:#fff;border:1px solid #E2E4E9;border-radius:12px;padding:16px 18px}
+.chart-title{font-size:13px;font-weight:600;color:#111;margin-bottom:14px}
+.bar-item{margin-bottom:10px}
+.bar-label{display:flex;justify-content:space-between;font-size:12px;color:#374151;margin-bottom:4px}
+.bar-label span:last-child{font-weight:600;color:#111}
+.bar-track{height:8px;background:#F0F1F4;border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;transition:width .5s}
+
+/* tabela */
+.rel-table-wrap{background:#fff;border:1px solid #E2E4E9;border-radius:12px;overflow:hidden}
+.rel-table-head{padding:12px 16px;background:#FAFAFA;border-bottom:1px solid #F0F1F4;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.rel-table-head .tit{font-size:13px;font-weight:600;color:#111}
+.rel-table-head .sub{font-size:11px;color:#9CA3AF}
+.rel-filters-inline{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap;align-items:center}
+.rel-filters-inline input,.rel-filters-inline select{border:1px solid #E2E4E9;border-radius:7px;padding:4px 10px;font-size:12px;color:#111;background:#fff;outline:none}
+.filter-active-badge{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;background:#EEF4FC;color:#1553A0;border-radius:20px;font-size:11px;font-weight:500}
+.filter-active-badge button{background:none;border:none;cursor:pointer;color:#1553A0;font-size:13px;line-height:1;padding:0}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{padding:9px 14px;text-align:left;font-size:11px;font-weight:600;color:#9CA3AF;text-transform:uppercase;letter-spacing:.04em;background:#FAFAFA;border-bottom:1px solid #F0F1F4;white-space:nowrap}
+td{padding:9px 14px;border-bottom:1px solid #F5F6F8;color:#374151;vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#FAFAFA}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500;white-space:nowrap}
+.badge-ok{background:#ECFDF5;color:#065F46}
+.badge-pend{background:#FEF2F2;color:#991B1B}
+.badge-nc{background:#F3F4F6;color:#6B7280}
+.badge-agas{background:#EEF4FC;color:#1553A0}
+.badge-eugas{background:#E8F7F1;color:#0C6B4E}
+.empty-state{padding:48px;text-align:center;color:#9CA3AF;font-size:13px}
+.loading{padding:48px;text-align:center;color:#9CA3AF;font-size:13px}
+.detail-btn{background:none;border:1px solid #E2E4E9;border-radius:6px;color:#374151;font-size:11px;cursor:pointer;padding:3px 8px;font-weight:500;transition:all .15s}
+.detail-btn:hover{background:#F5F6F8;border-color:#CBD0D8}
+
+/* modal */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:50;align-items:center;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:#fff;border-radius:14px;width:700px;max-width:95vw;max-height:88vh;overflow-y:auto;padding:26px}
+.modal h3{font-size:16px;font-weight:600;margin-bottom:4px;color:#111}
+.modal-meta{font-size:12px;color:#9CA3AF;margin-bottom:18px}
+.modal-close{float:right;background:none;border:none;font-size:22px;cursor:pointer;color:#9CA3AF;line-height:1;margin-top:-2px}
+.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.modal-item{padding:10px 12px;border-radius:8px;background:#F9FAFB;border:1px solid #F0F1F4}
+.modal-item-name{font-size:12px;font-weight:600;color:#374151}
+.modal-notes{padding:12px 14px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;font-size:12px;color:#92400E;line-height:1.6}
+
+/* impressão */
+@media print {
+  body.printing-modal * { visibility: hidden; }
+  body.printing-modal #modal-print-area, body.printing-modal #modal-print-area * { visibility: visible; }
+  body.printing-modal #modal-print-area { position: absolute; left: 0; top: 0; width: 100%; max-height:none; overflow:visible; box-shadow:none; padding:20px 30px }
+  body.printing-modal .modal-bg { background: white !important; position: static !important }
+  body.printing-modal .modal-grid { grid-template-columns: 1fr 1fr !important }
+
+  body.printing-relatorio * { visibility: hidden; }
+  body.printing-relatorio .print-area, body.printing-relatorio .print-area * { visibility: visible; }
+  body.printing-relatorio .print-area { position: absolute; left: 0; top: 0; width: 100%; padding: 0 }
+  body.printing-relatorio table { font-size: 11px !important }
+  body.printing-relatorio th, body.printing-relatorio td { padding: 6px 8px !important }
+
+  .no-print { display: none !important }
+  .badge { border: 1px solid #999 !important }
+  @page { margin: 1.5cm }
+}
+
+/* toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:500;z-index:100;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+.toast.err{background:#DC2626}
+
+@media(max-width:700px){
+  .top-row,.summary-row,.grid,.kpi-row,.charts-row{grid-template-columns:1fr 1fr}
+  .kpi-row{grid-template-columns:1fr 1fr}
+  .cod-fields{grid-template-columns:1fr 1fr}
+}
+@media(max-width:480px){
+  .kpi-row,.charts-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B7AFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/><path d="m9 14 2 2 4-4"/></svg>
+  <div>
+    <h1>Conferência de Cadastro</h1>
+    <p>Agás Gases Ltda &amp; Eugas Comércio de Gases Eireli</p>
+  </div>
+  <nav>
+    <button class="nav-btn active" onclick="showPage('checklist',this)">Checklist</button>
+    <button class="nav-btn" onclick="showPage('relatorio',this)">Dashboard</button>
+  </nav>
+</header>
+
+<!-- CHECKLIST -->
+<div id="page-checklist" class="container">
+  <div class="resp-box">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <label>Responsável pela conferência</label>
+    <input type="text" id="responsavel" placeholder="Seu nome completo"/>
+  </div>
+
+  <div class="top-row">
+    <div class="cod-box">
+      <div class="cod-box-head agas">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Agás — dados do cliente
+      </div>
+      <div class="cod-fields">
+        <div class="field-wrap"><label>Cód. cliente</label><input type="text" id="cod-agas" placeholder="Ex.: 001234"/></div>
+        <div class="field-wrap"><label>Nome do cliente</label><input type="text" id="nome-agas" placeholder="Razão social / nome"/></div>
+      </div>
+      <div class="status-toggle">
+        <span class="status-toggle-label">Situação:</span>
+        <button class="status-pill ativo" id="st-ativo-agas" onclick="setStatus('agas','ativo')">● Ativo</button>
+        <button class="status-pill inativo" id="st-inativo-agas" onclick="setStatus('agas','inativo')">○ Inativo</button>
+      </div>
+    </div>
+    <div class="cod-box">
+      <div class="cod-box-head eugas">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Eugas — dados do cliente
+      </div>
+      <div class="cod-fields">
+        <div class="field-wrap"><label>Cód. cliente</label><input type="text" id="cod-eugas" placeholder="Ex.: 005678"/></div>
+        <div class="field-wrap"><label>Nome do cliente</label><input type="text" id="nome-eugas" placeholder="Razão social / nome"/></div>
+      </div>
+      <div class="status-toggle">
+        <span class="status-toggle-label">Situação:</span>
+        <button class="status-pill ativo" id="st-ativo-eugas" onclick="setStatus('eugas','ativo')">● Ativo</button>
+        <button class="status-pill inativo" id="st-inativo-eugas" onclick="setStatus('eugas','inativo')">○ Inativo</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary-row">
+    <div class="sum-card">
+      <div class="sum-bar-accent" style="background:#378ADD"></div>
+      <div><div class="sum-num" id="num-a">0/9</div><div class="sum-label">Agás — itens conferidos</div></div>
+      <div class="prog-track"><div class="prog-fill agas" id="bar-a"></div></div>
+    </div>
+    <div class="sum-card">
+      <div class="sum-bar-accent" style="background:#1D9E75"></div>
+      <div><div class="sum-num" id="num-e">0/9</div><div class="sum-label">Eugas — itens conferidos</div></div>
+      <div class="prog-track"><div class="prog-fill eugas" id="bar-e"></div></div>
+    </div>
+  </div>
+
+  <div class="grid" id="main-grid"></div>
+
+  <div class="notes-card">
+    <div class="notes-head">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      <span>Anotações gerais</span>
+      <small>Observações livres sobre a conferência</small>
+    </div>
+    <div class="notes-body">
+      <textarea class="notes-ta" id="notas" placeholder="Registre aqui pendências, dúvidas ou qualquer observação relevante..." oninput="updateChar()"></textarea>
+      <div class="char-c" id="char-c">0 caracteres</div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-save" id="btn-salvar" onclick="salvar()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      Salvar conferência
+    </button>
+    <button class="btn btn-clear" onclick="limpar()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+      Limpar
+    </button>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="page-relatorio" class="container">
+  <div class="dash-title">Dashboard de conferências</div>
+  <div class="dash-sub">Clique em um card para filtrar os registros na tabela abaixo</div>
+
+  <div class="kpi-row">
+    <div class="kpi-card" id="kpi-total" onclick="filtrarKpi('total',this)">
+      <div class="kpi-accent" style="background:#6B7AFF"></div>
+      <div class="kpi-arrow">↗</div>
+      <div class="kpi-num" id="kn-total">—</div>
+      <div class="kpi-label">Total conferidos</div>
+      <div class="kpi-hint">Clique para ver todos</div>
+    </div>
+    <div class="kpi-card" id="kpi-agas" onclick="filtrarKpi('agas',this)">
+      <div class="kpi-accent" style="background:#378ADD"></div>
+      <div class="kpi-arrow">↗</div>
+      <div class="kpi-num" id="kn-agas">—</div>
+      <div class="kpi-label">Agás</div>
+      <div class="kpi-hint">Clique para filtrar</div>
+    </div>
+    <div class="kpi-card" id="kpi-eugas" onclick="filtrarKpi('eugas',this)">
+      <div class="kpi-accent" style="background:#1D9E75"></div>
+      <div class="kpi-arrow">↗</div>
+      <div class="kpi-num" id="kn-eugas">—</div>
+      <div class="kpi-label">Eugas</div>
+      <div class="kpi-hint">Clique para filtrar</div>
+    </div>
+    <div class="kpi-card" id="kpi-pend" onclick="filtrarKpi('pendencia',this)">
+      <div class="kpi-accent" style="background:#DC2626"></div>
+      <div class="kpi-arrow">↗</div>
+      <div class="kpi-num" id="kn-pend" style="color:#DC2626">—</div>
+      <div class="kpi-label">Com pendência</div>
+      <div class="kpi-hint">Clique para filtrar</div>
+    </div>
+  </div>
+
+  <div class="charts-row">
+    <div class="chart-card">
+      <div class="chart-title">Itens com mais pendências</div>
+      <div id="chart-pend"></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Conferências por data (últimas)</div>
+      <div id="chart-data"></div>
+    </div>
+  </div>
+
+  <div class="rel-table-wrap print-area" id="relatorio-print-area">
+    <div class="print-header" id="print-header" style="display:none;padding:16px 20px 0;border-bottom:1px solid #E2E4E9;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:12px">
+        <div>
+          <div style="font-size:18px;font-weight:700;color:#111">Relatório de Conferências</div>
+          <div style="font-size:12px;color:#6B7280;margin-top:3px" id="print-subtitle">Agás Gases Ltda & Eugas Comércio de Gases Eireli</div>
+        </div>
+        <div style="font-size:11px;color:#6B7280;text-align:right" id="print-date"></div>
+      </div>
+    </div>
+    <div class="rel-table-head no-print">
+      <div>
+        <div class="tit">Registros</div>
+        <div class="sub" id="rel-count">carregando...</div>
+      </div>
+      <div class="rel-filters-inline">
+        <div id="filtro-ativo-badge" style="display:none"></div>
+        <input type="text" id="fil-busca" placeholder="🔍 Nome ou código..." oninput="renderTabela()" style="width:180px"/>
+        <button class="btn btn-clear" style="padding:5px 12px;font-size:12px" onclick="imprimirRelatorio()">🖨️ Imprimir</button>
+        <button class="btn btn-clear" style="padding:5px 12px;font-size:12px" onclick="exportarCSV()">↓ CSV</button>
+      </div>
+    </div>
+    <div id="rel-body"><div class="loading">Carregando...</div></div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modal-bg" onclick="fecharModal(event)">
+  <div class="modal" id="modal-print-area">
+    <button class="modal-close no-print" onclick="document.getElementById('modal-bg').classList.remove('open')">×</button>
+    <h3 id="modal-title"></h3>
+    <div class="modal-meta" id="modal-meta"></div>
+    <div id="modal-body"></div>
+    <div class="modal-actions no-print" style="display:flex;gap:8px;margin-top:18px;padding-top:14px;border-top:1px solid #F0F1F4;justify-content:flex-end">
+      <button class="btn btn-clear" onclick="editarConferencia()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Editar
+      </button>
+      <button class="btn btn-clear" onclick="imprimirModal()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        Imprimir
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, query, orderBy, Timestamp, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyAw8MrgYLFoR2_Ygrl93AbkplYLRrTP1mg",
+  authDomain: "checklist-clientes-f9167.firebaseapp.com",
+  projectId: "checklist-clientes-f9167",
+  storageBucket: "checklist-clientes-f9167.firebasestorage.app",
+  messagingSenderId: "206730710752",
+  appId: "1:206730710752:web:cabf717e3bd9cb4c93ca85"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+window._db=db; window._col=collection; window._add=addDoc;
+window._get=getDocs; window._q=query; window._ord=orderBy; window._ts=Timestamp;
+window._doc=doc; window._upd=updateDoc; window._del=deleteDoc;
+</script>
+
+<script>
+const ITENS=[
+  {id:'vencimento',nome:'Vencimento',desc:'Prazo de vencimento preenchido',venc:true},
+  {id:'tipo_envio',nome:'Tipo de envio',desc:'Deve estar como E-mail'},
+  {id:'tipo_cobranca',nome:'Tipo de cobrança',desc:'Carteira ou banco (bancária: 756 Agás / 748 Eugas)'},
+  {id:'email_cobranca',nome:'E-mail de cobrança',desc:'Obrigatório para envio de boleto bancário'},
+  {id:'bloqueio',nome:'Bloqueio — "Não permitir"',desc:'A opção "Não permitir" deve estar marcada'},
+  {id:'inadimplencia',nome:'Dias de inadimplência',desc:'Deve estar configurado como 5 dias'},
+  {id:'esta_bloqueado',nome:'Está bloqueado?',desc:'Se bloqueado, deve estar marcado como Sim'},
+  {id:'comissao',nome:'Gerar comissão / Permite alterar',desc:'Ambos devem estar marcados como Sim'},
+  {id:'email_nf',nome:'E-mail cadastrado (NF)',desc:'E-mail para envio de cópia da nota fiscal'},
+  {id:'produto',nome:'Produto cadastrado',desc:'Verificar se há produto vinculado ao cliente',produto:true},
+];
+const EMPS=['agas','eugas'];
+let estado={};
+let situacao={agas:'',eugas:''};
+EMPS.forEach(e=>{estado[e]={};ITENS.forEach(i=>{estado[e][i.id]={sim:false,nao:false,obs:'',venc:'',produtos:[]};});});
+let todosRegistros=[];
+let filtroAtivo='total';
+let modalRegistroId=null;
+let editandoId=null;
+
+function showPage(p,btn){
+  document.getElementById('page-checklist').style.display=p==='checklist'?'block':'none';
+  document.getElementById('page-relatorio').style.display=p==='relatorio'?'block':'none';
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if(p==='relatorio') carregarDados();
+}
+window.showPage=showPage;
+
+function toggle(emp,id,val){
+  const s=estado[emp][id];
+  if(val==='sim'){s.sim=!s.sim;if(s.sim)s.nao=false;}
+  else{s.nao=!s.nao;if(s.nao)s.sim=false;}
+  renderAll();updateProgress();
+}
+window.toggle=toggle;
+function setObs(e,id,v){estado[e][id].obs=v;}window.setObs=setObs;
+function setVenc(e,id,v){estado[e][id].venc=v;}window.setVenc=setVenc;
+function addProduto(e,id){
+  if(!estado[e][id].produtos)estado[e][id].produtos=[];
+  estado[e][id].produtos.push({nome:'',preco:''});
+  renderAll();
+}
+window.addProduto=addProduto;
+function removeProduto(e,id,idx){
+  estado[e][id].produtos.splice(idx,1);
+  renderAll();
+}
+window.removeProduto=removeProduto;
+function setProdNome(e,id,idx,v){estado[e][id].produtos[idx].nome=v;}
+window.setProdNome=setProdNome;
+function setProdPreco(e,id,idx,v){estado[e][id].produtos[idx].preco=v;}
+window.setProdPreco=setProdPreco;
+function setStatus(emp,st){
+  situacao[emp]=st;
+  EMPS.forEach(e=>{
+    document.getElementById('st-ativo-'+e).classList.toggle('on',situacao[e]==='ativo');
+    document.getElementById('st-inativo-'+e).classList.toggle('on',situacao[e]==='inativo');
+  });
+}
+window.setStatus=setStatus;
+function updateChar(){const v=document.getElementById('notas').value;document.getElementById('char-c').textContent=v.length+' caractere'+(v.length!==1?'s':'');}
+window.updateChar=updateChar;
+
+function renderCol(e){
+  const s=estado[e];
+  const done=ITENS.filter(i=>s[i.id].sim||s[i.id].nao).length;
+  const pct=Math.round(done/ITENS.length*100);
+  let h=`<div class="col-card">
+    <div class="col-head ${e}">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>${e==='agas'?'Agás Gases Ltda':'Eugas Comércio de Gases'}</span>
+      <small>Banco ${e==='agas'?'756':'748'}</small>
+    </div>
+    <div class="col-prog"><div class="col-prog-fill ${e}" style="width:${pct}%"></div></div>
+    <div class="item-label">Item / Sim / Não</div>`;
+  ITENS.forEach(item=>{
+    const st=s[item.id];
+    h+=`<div class="item-row">
+      <div class="item-info">
+        <div class="item-name">${item.nome}</div>
+        <div class="item-desc">${item.desc}</div>
+        ${item.venc&&st.sim?`<input class="venc-inp" type="text" placeholder="Ex.: dia 10" value="${st.venc}" oninput="setVenc('${e}','${item.id}',this.value)"/>`:''}
+        ${item.produto&&st.sim?(()=>{
+          const prods=st.produtos||[];
+          let html='<div style="margin-top:6px;display:flex;flex-direction:column;gap:5px">';
+          prods.forEach((p,idx)=>{
+            html+=`<div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap">
+              <input class="venc-inp" style="max-width:160px;margin-top:0" type="text" placeholder="Produto ${idx+1}" value="${p.nome||''}" oninput="setProdNome('${e}','${item.id}',${idx},this.value)"/>
+              <input class="venc-inp" style="max-width:110px;margin-top:0" type="text" placeholder="Preço (R$)" value="${p.preco||''}" oninput="setProdPreco('${e}','${item.id}',${idx},this.value)"/>
+              <button onclick="removeProduto('${e}','${item.id}',${idx})" style="background:none;border:1px solid #FECACA;color:#991B1B;border-radius:6px;padding:2px 7px;font-size:11px;cursor:pointer;line-height:1" title="Remover">×</button>
+            </div>`;
+          });
+          html+=`<button onclick="addProduto('${e}','${item.id}')" style="background:#EEF4FC;border:1px dashed #6B7AFF;color:#1553A0;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;align-self:flex-start;font-weight:500">+ Adicionar produto</button>`;
+          html+='</div>';
+          return html;
+        })():''}
+        ${(st.sim||st.nao)?`<textarea class="obs-inp" placeholder="Observação..." oninput="setObs('${e}','${item.id}',this.value)">${st.obs}</textarea>`:''}
+      </div>
+      <div class="pills">
+        <button class="pill sim ${st.sim?'on':''}" onclick="toggle('${e}','${item.id}','sim')">✓ Sim</button>
+        <button class="pill nao ${st.nao?'on':''}" onclick="toggle('${e}','${item.id}','nao')">✗ Não</button>
+      </div>
+    </div>`;
+  });
+  return h+'</div>';
+}
+function renderAll(){document.getElementById('main-grid').innerHTML=renderCol('agas')+renderCol('eugas');}
+function updateProgress(){
+  EMPS.forEach(e=>{
+    const done=ITENS.filter(i=>estado[e][i.id].sim||estado[e][i.id].nao).length;
+    const pct=Math.round(done/ITENS.length*100);
+    const s=e==='agas'?'a':'e';
+    document.getElementById('bar-'+s).style.width=pct+'%';
+    document.getElementById('num-'+s).textContent=done+'/'+ITENS.length;
+  });
+}
+function limpar(){
+  EMPS.forEach(e=>{ITENS.forEach(i=>{estado[e][i.id]={sim:false,nao:false,obs:'',venc:'',produtos:[]};});});
+  situacao={agas:'',eugas:''};
+  EMPS.forEach(e=>{document.getElementById('st-ativo-'+e).classList.remove('on');document.getElementById('st-inativo-'+e).classList.remove('on');});
+  ['cod-agas','nome-agas','cod-eugas','nome-eugas','responsavel'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('notas').value='';
+  document.getElementById('char-c').textContent='0 caracteres';
+  editandoId=null;
+  const btn=document.getElementById('btn-salvar');
+  if(btn) btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Salvar conferência';
+  renderAll();updateProgress();
+}
+window.limpar=limpar;
+
+async function salvar(){
+  const resp=document.getElementById('responsavel').value.trim();
+  if(!resp){showToast('Informe o responsável.',true);return;}
+  const codA=document.getElementById('cod-agas').value.trim();
+  const codE=document.getElementById('cod-eugas').value.trim();
+  if(!codA&&!codE){showToast('Informe pelo menos um código de cliente.',true);return;}
+  const btn=document.getElementById('btn-salvar');
+  btn.disabled=true;btn.textContent='Salvando...';
+  try{
+    const notas=document.getElementById('notas').value;
+
+    if(editandoId){
+      // Modo edição: atualiza o registro existente
+      const orig=todosRegistros.find(x=>x.id===editandoId);
+      const e=orig?.empresa;
+      if(!e)throw new Error('registro original não encontrado');
+      const cod=document.getElementById('cod-'+e).value.trim();
+      const nome=document.getElementById('nome-'+e).value.trim();
+      const itensData={};
+      ITENS.forEach(item=>{itensData[item.id]={...estado[e][item.id]};});
+      await window._upd(window._doc(window._db,'conferencias',editandoId),{
+        cod,nome,situacao:situacao[e]||'',responsavel:resp,notas,itens:itensData,
+        temPendencia:ITENS.some(item=>estado[e][item.id].nao),
+        atualizadoEm:window._ts.now()
+      });
+      showToast('Conferência atualizada com sucesso!');
+      editandoId=null;
+      limpar();
+    } else {
+      // Modo criação: cria registros novos
+      for(const e of EMPS){
+        const cod=document.getElementById('cod-'+e).value.trim();
+        const nome=document.getElementById('nome-'+e).value.trim();
+        if(!cod)continue;
+        const itensData={};
+        ITENS.forEach(item=>{itensData[item.id]={...estado[e][item.id]};});
+        await window._add(window._col(window._db,'conferencias'),{
+          empresa:e,cod,nome,situacao:situacao[e]||'',responsavel:resp,notas,itens:itensData,
+          temPendencia:ITENS.some(item=>estado[e][item.id].nao),
+          criadoEm:window._ts.now()
+        });
+      }
+      showToast('Conferência salva com sucesso!');
+      limpar();
+    }
+  }catch(err){console.error(err);showToast('Erro ao salvar.',true);}
+  finally{
+    btn.disabled=false;
+    btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Salvar conferência';
+  }
+}
+window.salvar=salvar;
+
+async function carregarDados(){
+  if(!window._db)return;
+  document.getElementById('rel-body').innerHTML='<div class="loading">Carregando...</div>';
+  try{
+    const snap=await window._get(window._q(window._col(window._db,'conferencias'),window._ord('criadoEm','desc')));
+    todosRegistros=[];
+    snap.forEach(doc=>{todosRegistros.push({id:doc.id,...doc.data()});});
+    atualizarKPIs();
+    renderCharts();
+    renderTabela();
+  }catch(err){
+    console.error(err);
+    document.getElementById('rel-body').innerHTML='<div class="empty-state">Erro ao carregar dados.</div>';
+  }
+}
+window.carregarDados=carregarDados;
+
+function atualizarKPIs(){
+  document.getElementById('kn-total').textContent=todosRegistros.length;
+  document.getElementById('kn-agas').textContent=todosRegistros.filter(r=>r.empresa==='agas').length;
+  document.getElementById('kn-eugas').textContent=todosRegistros.filter(r=>r.empresa==='eugas').length;
+  document.getElementById('kn-pend').textContent=todosRegistros.filter(r=>r.temPendencia).length;
+}
+
+function filtrarKpi(tipo,el){
+  filtroAtivo=tipo;
+  document.querySelectorAll('.kpi-card').forEach(c=>c.className='kpi-card');
+  const cls={'total':'active','agas':'active-agas','eugas':'active-eugas','pendencia':'active-pend'};
+  el.classList.add(cls[tipo]||'active');
+  const labels={'total':'Todos','agas':'Agás','eugas':'Eugas','pendencia':'Com pendência'};
+  const badge=document.getElementById('filtro-ativo-badge');
+  badge.style.display='inline-flex';
+  badge.innerHTML=`<span>${labels[tipo]}</span><button onclick="limparFiltroKpi()">×</button>`;
+  renderTabela();
+}
+window.filtrarKpi=filtrarKpi;
+
+function limparFiltroKpi(){
+  filtroAtivo='total';
+  document.querySelectorAll('.kpi-card').forEach(c=>c.className='kpi-card');
+  document.getElementById('filtro-ativo-badge').style.display='none';
+  renderTabela();
+}
+window.limparFiltroKpi=limparFiltroKpi;
+
+function renderTabela(){
+  const busca=(document.getElementById('fil-busca')||{}).value?.toLowerCase()||'';
+  let dados=todosRegistros.filter(r=>{
+    if(filtroAtivo==='agas'&&r.empresa!=='agas')return false;
+    if(filtroAtivo==='eugas'&&r.empresa!=='eugas')return false;
+    if(filtroAtivo==='pendencia'&&!r.temPendencia)return false;
+    if(busca&&!r.nome?.toLowerCase().includes(busca)&&!r.cod?.toLowerCase().includes(busca))return false;
+    return true;
+  });
+  document.getElementById('rel-count').textContent=dados.length+' registro'+(dados.length!==1?'s':'');
+  if(!dados.length){document.getElementById('rel-body').innerHTML='<div class="empty-state">Nenhuma conferência encontrada.</div>';return;}
+  let html='<div style="overflow-x:auto"><table><thead><tr><th>Data</th><th>Empresa</th><th>Cód.</th><th>Cliente</th><th>Situação</th><th>Responsável</th><th>Status</th><th>Pendências</th><th></th></tr></thead><tbody>';
+  dados.forEach(r=>{
+    const dt=r.criadoEm?.toDate?r.criadoEm.toDate().toLocaleDateString('pt-BR'):'-';
+    const emp=r.empresa==='agas'?'<span class="badge badge-agas">Agás</span>':'<span class="badge badge-eugas">Eugas</span>';
+    const pends=ITENS.filter(i=>r.itens?.[i.id]?.nao).map(i=>i.nome);
+    const st=r.temPendencia?'<span class="badge badge-pend">⚠ Pendência</span>':'<span class="badge badge-ok">✓ OK</span>';
+    const sit=r.situacao==='ativo'?'<span class="badge badge-ok">● Ativo</span>':r.situacao==='inativo'?'<span class="badge badge-pend">○ Inativo</span>':'<span class="badge badge-nc">—</span>';
+    const pHtml=pends.length?pends.map(p=>`<div style="font-size:11px;color:#DC2626">• ${p}</div>`).join(''):'<span style="color:#C4C9D4;font-size:11px">—</span>';
+    html+=`<tr><td>${dt}</td><td>${emp}</td><td style="font-weight:600">${r.cod||'-'}</td><td>${r.nome||'-'}</td><td>${sit}</td><td>${r.responsavel||'-'}</td><td>${st}</td><td>${pHtml}</td><td><button class="detail-btn" onclick="abrirModal('${r.id}')">Detalhe</button></td></tr>`;
+  });
+  document.getElementById('rel-body').innerHTML=html+'</tbody></table></div>';
+}
+window.renderTabela=renderTabela;
+
+function renderCharts(){
+  // pendências por item
+  const contagem={};
+  ITENS.forEach(i=>{contagem[i.id]=0;});
+  todosRegistros.forEach(r=>{ITENS.forEach(i=>{if(r.itens?.[i.id]?.nao)contagem[i.id]++;});});
+  const sorted=ITENS.map(i=>({nome:i.nome,val:contagem[i.id]})).sort((a,b)=>b.val-a.val).slice(0,5);
+  const max=sorted[0]?.val||1;
+  let h='';
+  sorted.forEach(item=>{
+    const pct=Math.round(item.val/max*100);
+    const cor=item.val>0?'#DC2626':'#E2E4E9';
+    h+=`<div class="bar-item"><div class="bar-label"><span>${item.nome}</span><span>${item.val}</span></div><div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${cor}"></div></div></div>`;
+  });
+  document.getElementById('chart-pend').innerHTML=h||'<div style="color:#C4C9D4;font-size:12px">Sem dados</div>';
+
+  // por data
+  const porData={};
+  todosRegistros.forEach(r=>{
+    const dt=r.criadoEm?.toDate?r.criadoEm.toDate().toLocaleDateString('pt-BR'):'-';
+    porData[dt]=(porData[dt]||0)+1;
+  });
+  const datas=Object.entries(porData).slice(0,6).reverse();
+  const maxD=Math.max(...datas.map(d=>d[1]),1);
+  let h2='';
+  datas.forEach(([dt,val])=>{
+    const pct=Math.round(val/maxD*100);
+    h2+=`<div class="bar-item"><div class="bar-label"><span>${dt}</span><span>${val}</span></div><div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:#6B7AFF"></div></div></div>`;
+  });
+  document.getElementById('chart-data').innerHTML=h2||'<div style="color:#C4C9D4;font-size:12px">Sem dados</div>';
+}
+
+function abrirModal(id){
+  const r=todosRegistros.find(x=>x.id===id);if(!r)return;
+  modalRegistroId=id;
+  const dt=r.criadoEm?.toDate?r.criadoEm.toDate().toLocaleString('pt-BR'):'-';
+  const emp=r.empresa==='agas'?'Agás Gases Ltda':'Eugas Comércio de Gases Eireli';
+  document.getElementById('modal-title').textContent=(r.nome||r.cod)+' — '+emp;
+  const sitTxt=r.situacao==='ativo'?' · 🟢 Ativo':r.situacao==='inativo'?' · 🔴 Inativo':'';
+  document.getElementById('modal-meta').textContent='Conferido por '+r.responsavel+' em '+dt+' · Cód. '+r.cod+sitTxt;
+  let html='<div class="modal-grid">';
+  ITENS.forEach(item=>{
+    const st=r.itens?.[item.id];
+    const sb=st?.sim?'<span class="badge badge-ok">✓ Sim</span>':st?.nao?'<span class="badge badge-pend">✗ Não</span>':'<span class="badge badge-nc">Não conferido</span>';
+    const prodHtml=(st?.produtos&&st.produtos.length)?`<div style="font-size:11px;color:#6B7280;margin-top:4px">Produtos:<br>${st.produtos.map(p=>`• <strong>${p.nome||'(sem nome)'}</strong>${p.preco?' — R$ '+p.preco:''}`).join('<br>')}</div>`:'';
+    html+=`<div class="modal-item"><div class="modal-item-name">${item.nome}</div><div style="margin-top:5px">${sb}${st?.venc?`<span style="font-size:11px;color:#9CA3AF;margin-left:6px">Prazo: ${st.venc}</span>`:''}</div>${prodHtml}${st?.obs?`<div style="font-size:11px;color:#6B7280;margin-top:4px">Obs: ${st.obs}</div>`:''}</div>`;
+  });
+  html+='</div>';
+  if(r.notas)html+=`<div class="modal-notes"><strong>Anotações gerais:</strong><br>${r.notas}</div>`;
+  document.getElementById('modal-body').innerHTML=html;
+  document.getElementById('modal-bg').classList.add('open');
+}
+window.abrirModal=abrirModal;
+
+function imprimirModal(){
+  document.body.classList.add('printing-modal');
+  window.print();
+  setTimeout(()=>document.body.classList.remove('printing-modal'),500);
+}
+window.imprimirModal=imprimirModal;
+
+function imprimirRelatorio(){
+  const labels={'total':'Todos os registros','agas':'Apenas Agás','eugas':'Apenas Eugas','pendencia':'Com pendência'};
+  const busca=(document.getElementById('fil-busca')||{}).value||'';
+  let sub='Agás Gases Ltda & Eugas Comércio de Gases Eireli — '+(labels[filtroAtivo]||'Todos');
+  if(busca) sub+=' · busca: "'+busca+'"';
+  document.getElementById('print-subtitle').textContent=sub;
+  document.getElementById('print-date').textContent='Emitido em '+new Date().toLocaleString('pt-BR');
+  document.getElementById('print-header').style.display='block';
+  document.body.classList.add('printing-relatorio');
+  window.print();
+  setTimeout(()=>{
+    document.body.classList.remove('printing-relatorio');
+    document.getElementById('print-header').style.display='none';
+  },500);
+}
+window.imprimirRelatorio=imprimirRelatorio;
+
+function editarConferencia(){
+  if(!modalRegistroId)return;
+  const r=todosRegistros.find(x=>x.id===modalRegistroId);
+  if(!r)return;
+
+  // limpa e carrega
+  limpar();
+  editandoId=r.id;
+
+  // responsável
+  document.getElementById('responsavel').value=r.responsavel||'';
+
+  // dados do cliente da empresa correta
+  const e=r.empresa;
+  document.getElementById('cod-'+e).value=r.cod||'';
+  document.getElementById('nome-'+e).value=r.nome||'';
+
+  // situação
+  if(r.situacao){
+    situacao[e]=r.situacao;
+    document.getElementById('st-'+r.situacao+'-'+e).classList.add('on');
+  }
+
+  // itens
+  ITENS.forEach(item=>{
+    const si=r.itens?.[item.id];
+    if(si){
+      estado[e][item.id]={
+        sim:!!si.sim,nao:!!si.nao,
+        obs:si.obs||'',venc:si.venc||'',
+        produtos:si.produtos||[]
+      };
+    }
+  });
+
+  // notas
+  document.getElementById('notas').value=r.notas||'';
+  updateChar();
+
+  renderAll();updateProgress();
+
+  // fecha modal e vai para checklist
+  document.getElementById('modal-bg').classList.remove('open');
+  document.querySelector('.nav-btn').click();
+
+  // ajusta botão para "atualizar"
+  const btn=document.getElementById('btn-salvar');
+  btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><polyline points="21 3 21 8 16 8"/></svg> Atualizar conferência';
+
+  showToast('Editando conferência — altere e clique em Atualizar');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+window.editarConferencia=editarConferencia;
+
+function fecharModal(e){if(e.target===document.getElementById('modal-bg'))document.getElementById('modal-bg').classList.remove('open');}
+window.fecharModal=fecharModal;
+
+function exportarCSV(){
+  if(!todosRegistros.length){showToast('Sem dados para exportar.',true);return;}
+  let csv='Data,Empresa,Cód.,Cliente,Situação,Responsável,Status,Pendências\n';
+  todosRegistros.forEach(r=>{
+    const dt=r.criadoEm?.toDate?r.criadoEm.toDate().toLocaleDateString('pt-BR'):'-';
+    const pends=ITENS.filter(i=>r.itens?.[i.id]?.nao).map(i=>i.nome).join('; ');
+    const sit=r.situacao==='ativo'?'Ativo':r.situacao==='inativo'?'Inativo':'-';
+    csv+=`"${dt}","${r.empresa==='agas'?'Agás':'Eugas'}","${r.cod}","${r.nome}","${sit}","${r.responsavel}","${r.temPendencia?'Com pendência':'OK'}","${pends}"\n`;
+  });
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}));
+  a.download=`conferencias_${new Date().toLocaleDateString('pt-BR').replace(/\//g,'-')}.csv`;
+  a.click();
+}
+window.exportarCSV=exportarCSV;
+
+function showToast(msg,err=false){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast'+(err?' err':'');
+  setTimeout(()=>t.classList.add('show'),10);
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+renderAll();
+</script>
+</body>
+</html>
